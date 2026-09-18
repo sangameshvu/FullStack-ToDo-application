@@ -4,6 +4,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const mongodb_url = process.env.MONGODB_URL;
+
 mongoose.connect(mongodb_url).then(()=>{
     console.log('DB connected successfully');
 }).catch((err)=>{
@@ -22,7 +23,10 @@ const todoSchema = mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : "user"
     },
-    completed: Boolean
+    completed: {
+        type : Boolean,
+        default : false
+    }
 });
 
 const user = mongoose.model("user",userSchema);

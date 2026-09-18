@@ -54,14 +54,39 @@ router.get('/allTodos',userAuthMiddleware, async (req,res)=>{
     })
 })
 
-router.put('/completed',userAuthMiddleware, (req,res)=>{
-    const updatedTodo = req.body;
-    const parsedPayload = createTodoZod.safeParse(updatedTodo);
-    if(!parsedPayload.success) {
-        res.status(411).json({
-            "message": "you sent the wrong inputs"
+router.put('/completed/:id',userAuthMiddleware,async (req,res)=>{
+    try{
+        const todoId = req.params.id;
+        console.log("todoId", todoId);
+        console.log("userId",req.user.userId)
+        const result = await todo.findOneAndUpdate({
+            _id : todoId,
+            userId : req.user.userId
+        },
+        {
+            $set : {
+                completed : true
+            }
+        },
+        {
+            new : true
+        });
+        // console.log("result",result);
+        if(!result) {
+            return res.status(404).json({
+                "message": "Todo not found"
+            });
+        }
+        console.log("valid result");
+        res.status(200).json({
+            "Message":"Todo Updated Successfully",
         })
+    } catch(err) {
+        console.log("err: ",err)
+        res.status(500).json({
+            "message":"Error while Updating the todo"
+        });
     }
-})
+});
 
 module.exports = router;

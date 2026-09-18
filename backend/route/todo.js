@@ -57,8 +57,7 @@ router.get('/allTodos',userAuthMiddleware, async (req,res)=>{
 router.put('/completed/:id',userAuthMiddleware,async (req,res)=>{
     try{
         const todoId = req.params.id;
-        console.log("todoId", todoId);
-        console.log("userId",req.user.userId)
+
         const result = await todo.findOneAndUpdate({
             _id : todoId,
             userId : req.user.userId
@@ -71,7 +70,7 @@ router.put('/completed/:id',userAuthMiddleware,async (req,res)=>{
         {
             new : true
         });
-        // console.log("result",result);
+
         if(!result) {
             return res.status(404).json({
                 "message": "Todo not found"

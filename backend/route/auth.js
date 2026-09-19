@@ -1,8 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 
-const userAuthMiddleware = require('../middleware/userAuth');
-const { user, todo } = require('../module/index')
+const { user } = require('../module/index')
 const { authZod } = require('../types')
 const path = require('path');
 
@@ -37,15 +36,14 @@ router.post('/signin',async (req,res)=>{
 router.post('/signup',async (req,res)=> {
     const userPayload = req.body;
     const parsedPayload = authZod.safeParse(userPayload);
-    if(!parsedPayload) {
+    if(!parsedPayload.success) {
         res.status(409).json({
-            "message":"enter proper input"
+            "message": parsedPayload.error.issues[0]?.message || "Enter valid signup details"
         })
         return
     }
     const exists = await user.findOne({
-        username : userPayload.username,
-        password : userPayload.password
+        username : userPayload.username
     })
     if(exists) {
         res.status(409).json({

@@ -14,11 +14,8 @@ const authZod = zod.object({
     .string()
     .min(1, { message: "Username is required." })
     .trim()
-    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
-      message: "Username must match the format 'name@domain.com'.",
-    })
-    .refine((val) => val.endsWith('@smtg.com'), {
-      message: "Username must specifically end with '@smtg.com'.",
+    .regex(/^[^\s@]+@[^\s@]+\.com$/, {
+      message: "Username must contain @ and end with .com.",
     }),
 
   password: zod
